@@ -7,7 +7,20 @@ document.addEventListener("DOMContentLoaded", () => {
   let nextRandom = 0;
   let timeId;
   let score = 0;
-  const colors = ["orange", "red", "purple", "green", "blue"];
+  let _xStart = 0;
+  let _xEnd = 0;
+  let _yStart = 0;
+  let _yEnd = 0;
+  let canTouch = true;
+
+  // const colors = ["orange", "red", "purple", "green", "blue"];
+  const colors = [
+    " url(./img/bricks/brickYellow.png)",
+    " url(./img/bricks/brickBlue.png)",
+    " url(./img/bricks/brickRed.png)",
+    " url(./img/bricks/brickGreen.png)",
+    " url(./img/bricks/brickPurple.png)",
+  ];
 
   //The Tetrominoes
   const lTetrominoes = [
@@ -55,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function draw() {
     current.forEach((index) => {
       squares[currentPosition + index].classList.add("tetromino");
-      squares[currentPosition + index].style.backgroundColor = colors[random];
+      squares[currentPosition + index].style.backgroundImage = colors[random];
     });
   }
 
@@ -63,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function undraw() {
     current.forEach((index) => {
       squares[currentPosition + index].classList.remove("tetromino");
-      squares[currentPosition + index].style.backgroundColor = "";
+      squares[currentPosition + index].style.backgroundImage = "";
     });
   }
   //make the terominoes move every second
@@ -81,7 +94,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
   document.addEventListener("keydown", control);
+  document.addEventListener("touchstart", touchStart);
+  document.addEventListener("touchend", touchEnd);
 
+  function touchStart(e) {
+    _xStart = e.getLocationX();
+    _yStart = e.getLocationY();
+  }
+  function touchEnd(e) {
+    _xEnd = e.getLocationX();
+    _yEnd = e.getLocationY();
+    touchMove();
+  }
+
+  function touchMove() {
+    if (!canTouch) return;
+
+    if (_xStart != null && _yStart != null && _xEnd != null && _yEnd != null) {
+      if (Math.abs(_xEnd - _xStart) > Math.abs(_yEnd - _yStart)) {
+        if (_xEnd > _xStart) {
+          moveRight();
+        } else {
+          moveLeft();
+        }
+      } else {
+        if (_yEnd > _yStart) {
+          rotate();
+        } else {
+          moveDown();
+        }
+      }
+    }
+    // else cc.error("ERROR!!!");
+  }
   //move down function
   function moveDown() {
     undraw();
@@ -178,11 +223,11 @@ document.addEventListener("DOMContentLoaded", () => {
     //remove any trace of a tetromino form the entire grid
     displaySquares.forEach((square) => {
       square.classList.remove("tetromino");
-      square.style.backgroundColor = "";
+      square.style.backgroundImage = "";
     });
     upNextTetrominoes[nextRandom].forEach((index) => {
       displaySquares[displayIndex + index].classList.add("tetromino");
-      displaySquares[displayIndex + index].style.backgroundColor = colors[nextRandom];
+      displaySquares[displayIndex + index].style.backgroundImage = colors[nextRandom];
     });
   }
 
@@ -209,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
         row.forEach((index) => {
           squares[index].classList.remove("taken");
           squares[index].classList.remove("tetromino");
-          squares[index].style.backgroundColor = "";
+          squares[index].style.backgroundImage = "";
         });
         const squaresRemoved = squares.splice(i, width);
         squares = squaresRemoved.concat(squares);

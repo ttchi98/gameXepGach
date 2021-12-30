@@ -12,6 +12,7 @@
   width: 20px;
   height: 20px;
   /* background-color: gold; */
+  background-size: contain;
 }
 .tetromino {
   background-color: greenyellow;
@@ -28,4 +29,5 @@
   width: 20px;
   height: 20px;
   /* background-color: red; */
+  background-size: contain;
 }
